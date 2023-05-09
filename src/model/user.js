@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
-const Campaign = require('./campaign');
+const {campaignSchema} = require('./campaign');
 
 const userSchema = new mongoose.Schema({
+    userAppKey:{
+        type: String,
+        required: true,
+    } ,
     name:{
         type: String,
         required: true
@@ -12,11 +16,24 @@ const userSchema = new mongoose.Schema({
     googleId:{
         type: String,
     },
+
+    accessToken:{
+        type: String,
+
+    },
+    refreshToken:{
+        type: String,
+    },
+    tokenExpire:{
+        type: Number,
+    },
+
     picture:{
         type: String,
     },
     campaign:{
-        type: [Campaign],
+        type: [campaignSchema],
+        default: []
     },
 })
 

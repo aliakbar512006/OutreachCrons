@@ -46,7 +46,7 @@ const schedule = new mongoose.Schema({
     required: true
   },
   days:{
-    type: string,
+    type: String,
     enum: ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'],
     required: true
   },
@@ -55,7 +55,7 @@ const schedule = new mongoose.Schema({
     required: true
   },
   repeat:{
-    type: number
+    type: Number
   }
 })
 
@@ -99,7 +99,7 @@ const campaignSchema = new mongoose.Schema({
   action: {
     type: String,
     enum: ['sendEmail','draft'],
-    default: draft
+    default: "draft"
   },
 
   scheduledTime: {
@@ -112,4 +112,4 @@ const campaignSchema = new mongoose.Schema({
 
 const Campaign = mongoose.model('Campaign', campaignSchema);
 
-module.exports = Campaign;
+module.exports = {Campaign, campaignSchema}
