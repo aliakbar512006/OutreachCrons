@@ -2,14 +2,15 @@
 const { google } = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
 const { OAuth2Client } = require('google-auth-library'); // add this line
-
-const credentials = require('../../../../credential.json');
+const dotenv = require('dotenv')
+dotenv.config()
+const config = require ("../../../config/index");
 
 const oauth2Client = new OAuth2(
-  credentials.web.client_id,
-  credentials.web.client_secret,
-  credentials.web.redirect_uris[0]
-);
+  config.client_id,
+  config.client_secret,
+  config.redirect_uris
+  );
 
 const SCOPES = [
     "https://mail.google.com/",
@@ -44,10 +45,10 @@ async function getUserData(idToken) {
     // 
   
     // decode the ID token
-    const client = new OAuth2Client(credentials.web.client_id);
+    const client = new OAuth2Client(config.client_id);
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: credentials.web.client_id,
+      audience: config.client_id,
     });
     return ticket.getPayload();
   

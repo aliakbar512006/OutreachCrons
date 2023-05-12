@@ -2,6 +2,7 @@ const auth = require('./auth');
 const User = require('../../../model/user');
 const moment  = require('moment');
 const { genAppAccessToken } = require('../../../utils');
+const config = require('../../../config');
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -39,7 +40,7 @@ const googleOathConroller = (app) => {
           refreshToken: token.refresh_token,
           tokenExpire: token.expiry_date
         })
-        return res.redirect(`${process.env.frontendUrl}/social/?token=${userAppKey}`);
+        return res.redirect(`${config.FRONTEND_URL}/social/?token=${userAppKey}`);
       }else {
         if(existUser.tokenExpire <= moment().subtract(3, 'days')){
           //get new token from refresh token
@@ -49,18 +50,16 @@ const googleOathConroller = (app) => {
             accessToken: newToken.access_token,
             refreshToken: newToken.refresh_token
           })
-          return res.redirect(`${process.env.frontendUrl}/social/?token=${existUser.userAppKey}`);
+          return res.redirect(`${config.FRONTEND_URL}/social/?token=${existUser.userAppKey}`);
         }else {
-         
-          console.log( process.env.frontendUrl)
-          return res.redirect(`http://localhost:3001/social/?token=${existUser.userAppKey}`);
+          return res.redirect(`${config.FRONTEND_URL}/social/?token=${existUser.userAppKey}`);
         }
 
       }
 
     } catch (error) {  
       console.log(error)
-      // return res.redirect(`${process.env.frontendUrl}`);
+      // return res.redirect(`${config.FRONTEND_URL}`);
     }
    
   });

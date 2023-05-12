@@ -31,11 +31,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ::::::::::::: Controllers ::::::::::::::::::::
 const { googleOathConroller } = require('./controllers/auth/googleOauth2/googleOuath');
+const { Emailtracking } = require('./controllers/Emailtracking/index');
 // ::::::::::::::End of Controllers::::::::::::::
 
 // ::::::::::::: Routes ::::::::::::::::::::
 const scheduleRoute = require('./routes/sheduleRoute');
 const { cron } = require('./service/email/cron');
+const config = require('./config');
 // ::::::::::::::End of Routes::::::::::::::
 
 
@@ -43,13 +45,9 @@ const { cron } = require('./service/email/cron');
 
 // initailize google oath controller
 googleOathConroller(app)
+Emailtracking(app)
 app.use('/schedule', scheduleRoute);
-app.get('/trackmail/*',(req,res)=>{
-  console.log(req.query)
-  res.status(200).sendFile(path.join(__dirname,'public','trackmail.gif'))
-}
-)
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`);
 });
 module.exports = app;

@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const Job = require('../../model/jobSchema');
 const sendEmail = require('../../utils/sendEmail');
 const moment = require('moment');
+const {generateTrackingLink} = require('../../utils');
 
 // Run the job every minute for testing purposes
 cron.schedule('* * * * *', async () => {
@@ -13,21 +14,36 @@ cron.schedule('* * * * *', async () => {
 
   // Loop through each job and execute it
   for (const job of jobs) {
-
     try {
-      // Send the email using the user's authentication tokens
-      await sendEmail({
-        from: job.userId.email,
-        messageId: job._id,
-        to: job.email,
-        subject: job.subject,
-        message: job.message,
-        trackingEndpoint: process.env.TRACKING_ENDPOINT,
-        accessToken: job.userId.accessToken,
-        refreshToken: job.userId.refreshToken,
-      });
-
+      // Send the email 
+      const sendEmailsWithTrackingLinks = async (emails) => {  
+        const promises = emails?.map(async (email) => {
+          const trackingLink = await generateTrackingLink({email, messageId: job._id,
+            scheduleId: job._id,trackingId:job.trackingId});
+         return  await sendEmail({
+            from: job.userId.email,
+            messageId: job._id,
+            scheduleId: job.trackingId,
+            to: email,
+            subject: job.subject,
+            message: job.message,
+            accessToken: job.userId.accessToken,
+            refreshToken: job.userId.refreshToken,
+            labelIds: job.labelIds,
+            trackingLink
+          });       
+        
+        });
+      
+        const results = await Promise.all(promises);
+        console.log(`Sent ${emails.length} emails with tracking links`);
+        return results;
+      };
+      
+      
+      const output = await  sendEmailsWithTrackingLinks(job.email);
       // Update the last run time and calculate the next run time
+      console.log("output",output)
       const char = job.interval.split('$');
      
       const nextRunTime = moment(Date.now()).add(Number(char[0]), char[1]).format();

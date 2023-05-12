@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
-
-const Db = mongoose.connect("mongodb://localhost:27017/theOutreach", {
+const dotenv = require('dotenv')
+dotenv.config()
+const config = require ("./index");
+console.log(config)
+const Db = mongoose.connect(config.DATABASE_URL,{
     useNewUrlParser: true,
     useUnifiedTopology: true
   }
